@@ -1,36 +1,15 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const Header = (props) => (
-	<div>
-		<h1>{props.text}</h1>
-	</div>
+const Button = (props) => <button onClick={props.handleClick}>{props.text}</button>;
+
+const Statistics = ({ text, value }) => (
+	<p>
+		{text}: {value}
+	</p>
 );
 
-const FeedbackButton = (props) => <button onClick={props.handleClick}>{props.text}</button>;
-
-const Statistics = (props) => {
-	if (props.total === 0) {
-		return <p>No feedback given</p>;
-	} else {
-		return (
-			<React.Fragment>
-				<h2>{props.text}</h2>
-				<div>Good...{props.good}</div>
-				<div>Neutral...{props.neutral}</div>
-				<div>Bad...{props.bad}</div>
-				<strong>Total... {props.total}</strong>
-				<div>Average...{props.average}</div>
-				<div>Positive Feedback {props.percent} % </div>
-			</React.Fragment>
-		);
-	}
-};
-
 const App = () => {
-	const headerText = 'give feeback';
-	const statisticsText = 'statistics';
-
 	const [ good, setGood ] = useState(0);
 	const [ neutral, setNeutral ] = useState(0);
 	const [ bad, setBad ] = useState(0);
@@ -53,25 +32,23 @@ const App = () => {
 
 	let values = [ good, neutral, bad ];
 	let sum = values.reduce((previous, current) => (current += previous));
-	let average = sum / values.length;
-
-	let percent = isNaN(good / total) ? '0' : good / total * 100;
+	let average = (sum / values.length).toFixed(1);
+	let percent = isNaN(good / total) ? '0.00%' : `${good / total * 100}`;
+	let posPercent = parseInt(percent).toFixed(1) + '%';
 
 	return (
 		<div>
-			<Header text={headerText} />
-			<FeedbackButton handleClick={incrementGood} text="good" />
-			<FeedbackButton handleClick={incrementNeutral} text="neutral" />
-			<FeedbackButton handleClick={incrementBad} text="bad" />
-			<Statistics
-				text={statisticsText}
-				good={good}
-				neutral={neutral}
-				bad={bad}
-				total={total}
-				average={average}
-				percent={percent}
-			/>
+			<h1>give feedback</h1>
+			<Button handleClick={incrementGood} text="good" />
+			<Button handleClick={incrementNeutral} text="neutral" />
+			<Button handleClick={incrementBad} text="bad" />
+			<h2>statistics</h2>
+			<Statistics text="good" value={good} />
+			<Statistics text="neutral" value={neutral} />
+			<Statistics text="bad" value={bad} />
+			<Statistics text="total" value={total} />
+			<Statistics text="average" value={average} />
+			<Statistics text="percent" value={posPercent} />
 		</div>
 	);
 };
